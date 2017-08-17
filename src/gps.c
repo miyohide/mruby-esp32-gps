@@ -5,7 +5,7 @@
 
 #define GPS_TXD_PIN (34)
 
-char* read_line(uart_port_u uart) {
+char* read_line(uart_port_t uart) {
     static char line[256];
     int size;
     char *ptr = line;
@@ -13,7 +13,7 @@ char* read_line(uart_port_u uart) {
         size = uart_read_bytes(UART_NUM_2, (unsigned char *)ptr, 1, portMAX_DELAY);
         if (size == 1) {
             if (*ptr == '\n') {
-                ptr++:
+                ptr++;
                 *ptr = 0;
                 return line;
             }
@@ -50,7 +50,7 @@ static mrb_value mrb_esp32_gps_dogps(mrb_state *mrb, mrb_value self) {
         // }
 }
 
-void mrb_mruby_esp32_gps_init(mrb_state* mrb) {
+void mrb_mruby_esp32_gps_gem_init(mrb_state* mrb) {
     struct RClass *esp32, *gps;
 
     esp32 = mrb_define_module(mrb, "ESP32");
@@ -59,4 +59,4 @@ void mrb_mruby_esp32_gps_init(mrb_state* mrb) {
     mrb_define_module_function(mrb, gps, "doGPS", mrb_esp32_gps_dogps, MRB_ARGS_NONE());
 }
 
-void mrb_mruby_esp32_gps_final(mrb_state* mrb) {}
+void mrb_mruby_esp32_gps_gem_final(mrb_state* mrb) {}
