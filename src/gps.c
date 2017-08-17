@@ -5,7 +5,7 @@
 
 #define GPS_TXD_PIN (34)
 
-char *read_line(uart_port_u uart) {
+char* read_line(uart_port_u uart) {
     static char line[256];
     int size;
     char *ptr = line;
