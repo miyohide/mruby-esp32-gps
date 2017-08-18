@@ -22,7 +22,7 @@ char* read_line(uart_port_t uart) {
     }
 }
 
-static mrb_value mrb_esp32_gps_dogps(mrb_state *mrb, mrb_value self) {
+static mrb_value mrb_esp32_gps_init(mrb_state *mrb, mrb_value self) {
     uart_config_t uart_conf;
     uart_conf.baud_rate  = 9600;
     uart_conf.data_bits  = UART_DATA_8_BITS;
@@ -36,18 +36,11 @@ static mrb_value mrb_esp32_gps_dogps(mrb_state *mrb, mrb_value self) {
 
     uart_driver_install(UART_NUM_2, 2048, 2048, 10, 17, NULL);
 
-    char *line = read_line(UART_NUM_2);
-    return mrb_str_new_cstr(mrb, line);
-        // switch(minmea_sentence_id(line, false)) {
-        //     case MINMEA_STENTENCE_RMC:
-        //     struct minmea_sentence_rmc frame;
-        //     if (minmea_parse_rmc(&frame, line)) {
-        //         /*
-        //         frame.latitude.value, frame.latitude.scale,
-        //         frame.longitude.value, frame.longitude.scale
-        //         */
-        //     }
-        // }
+    return self;
+}
+
+static mrb_value mrb_esp32_gps_dogps(mrb_state *mrb, mrb_value self) {
+    return mrb_str_new_cstr(mrb, read_line(UART_NUM_2));
 }
 
 void mrb_mruby_esp32_gps_gem_init(mrb_state* mrb) {
@@ -56,6 +49,7 @@ void mrb_mruby_esp32_gps_gem_init(mrb_state* mrb) {
     esp32 = mrb_define_module(mrb, "ESP32");
     gps = mrb_define_module_under(mrb, esp32, "GPS");
 
+    mrb_define_module_function(mrb, gps, "init", mrb_esp32_gps_init, MRB_ARGS_NONE());
     mrb_define_module_function(mrb, gps, "doGPS", mrb_esp32_gps_dogps, MRB_ARGS_NONE());
 }
 
