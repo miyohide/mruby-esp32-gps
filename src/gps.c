@@ -3,38 +3,31 @@
 #include "driver/uart.h"
 // #include "minmea.h"
 
-#define GPS_TXD_PIN (34)
+static QueueHandle_t uart0_queue;
 
 char* read_line(uart_port_t uart) {
-    static char line[256];
-    int size;
-    char *ptr = line;
-    while(1) {
-        size = uart_read_bytes(UART_NUM_2, (unsigned char *)ptr, 1, portMAX_DELAY);
-        if (size == 1) {
-            if (*ptr == '\n') {
-                ptr++;
-                *ptr = 0;
-                return line;
-            }
-            ptr++;
+    uint8_t* data = (uint8_t*)malloc(1024);
+    do {
+        int len = uart_read_bytes(UART_NUM_0, data, 1024, 100 / portTICK_RATE_MS);
+        if (len > 0) {
+            return (const char *) data;
         }
-    }
+    } while(1);
 }
 
 static mrb_value mrb_esp32_gps_init(mrb_state *mrb, mrb_value self) {
     uart_config_t uart_conf;
-    uart_conf.baud_rate  = 9600;
+    uart_conf.baud_rate  = 115200;
     uart_conf.data_bits  = UART_DATA_8_BITS;
     uart_conf.parity     = UART_PARITY_DISABLE;
     uart_conf.stop_bits  = UART_STOP_BITS_1;
     uart_conf.flow_ctrl  = UART_HW_FLOWCTRL_DISABLE;
-    uart_conf.rx_flow_ctrl_thresh = 120;
+    uart_conf.rx_flow_ctrl_thresh = 122;
 
-    uart_param_config(UART_NUM_2, &uart_conf);
-    uart_set_pin(UART_NUM_2, UART_PIN_NO_CHANGE, GPS_TXD_PIN, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
+    uart_param_config(UART_NUM_0, &uart_conf);
+    uart_set_pin(UART_NUM_0, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
 
-    uart_driver_install(UART_NUM_2, 2048, 2048, 10, 17, NULL);
+    uart_driver_install(UART_NUM_2, 2048, 2048, 10, &uart0_queue, NULL);
 
     return self;
 }
