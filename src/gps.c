@@ -1,7 +1,5 @@
 #include <mruby.h>
 #include <mruby/value.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include "driver/uart.h"
 // #include "minmea.h"
 
@@ -9,10 +7,10 @@ static QueueHandle_t uart0_queue;
 
 char* read_line(uart_port_t uart) {
     uint8_t* data = (uint8_t*)malloc(1024);
-    memset(data, 0x0, 1024);
     do {
         int len = uart_read_bytes(UART_NUM_2, data, 1024, 100 / portTICK_RATE_MS);
         if (len > 0) {
+            data[len + 1] = NULL;
             return (const char *) data;
         }
     } while(1);
