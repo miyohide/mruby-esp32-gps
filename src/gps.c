@@ -37,7 +37,7 @@ static mrb_value mrb_esp32_gps_init(mrb_state *mrb, mrb_value self) {
 }
 
 static mrb_value mrb_esp32_gps_dogps(mrb_state *mrb, mrb_value self) {
-    return mrb_str_new_cstr(mrb, read_line(UART_NUM_2));
+    return mrb_str_new_cstr(mrb, read_line(UART_NUM_0));
 }
 
 void mrb_mruby_esp32_gps_gem_init(mrb_state* mrb) {
