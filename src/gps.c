@@ -3,7 +3,7 @@
 #include "driver/uart.h"
 // #include "minmea.h"
 
-static QueueHandle_t uart0_queue;
+//static QueueHandle_t uart0_queue;
 
 char* read_line(uart_port_t uart) {
     uint8_t* data = (uint8_t*)malloc(1024);
@@ -17,17 +17,21 @@ char* read_line(uart_port_t uart) {
 
 static mrb_value mrb_esp32_gps_init(mrb_state *mrb, mrb_value self) {
     uart_config_t uart_conf;
-    uart_conf.baud_rate  = 115200;
+    uart_conf.baud_rate  = 9600;
     uart_conf.data_bits  = UART_DATA_8_BITS;
     uart_conf.parity     = UART_PARITY_DISABLE;
     uart_conf.stop_bits  = UART_STOP_BITS_1;
     uart_conf.flow_ctrl  = UART_HW_FLOWCTRL_DISABLE;
-    uart_conf.rx_flow_ctrl_thresh = 122;
+    uart_conf.rx_flow_ctrl_thresh = 120;
 
     uart_param_config(UART_NUM_0, &uart_conf);
-    uart_set_pin(UART_NUM_0, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
+    uart_set_pin(UART_NUM_0,
+         UART_PIN_NO_CHANGE,  // TX
+         UART_PIN_NO_CHANGE,  // RX
+         UART_PIN_NO_CHANGE,  // RTS
+         UART_PIN_NO_CHANGE); // CTS
 
-    uart_driver_install(UART_NUM_2, 2048, 2048, 10, &uart0_queue, NULL);
+    uart_driver_install(UART_NUM_2, 2048, 0, 0, NULL, 0);
 
     return self;
 }
