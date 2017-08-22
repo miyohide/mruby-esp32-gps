@@ -1,5 +1,6 @@
 #include <mruby.h>
 #include <mruby/value.h>
+#include <stdio.h>
 #include "driver/uart.h"
 // #include "minmea.h"
 
