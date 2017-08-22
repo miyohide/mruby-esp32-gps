@@ -31,7 +31,7 @@ static mrb_value mrb_esp32_gps_init(mrb_state *mrb, mrb_value self) {
          UART_PIN_NO_CHANGE,  // RTS
          UART_PIN_NO_CHANGE); // CTS
 
-    uart_driver_install(UART_NUM_2, 2048, 0, 0, NULL, 0);
+    uart_driver_install(UART_NUM_0, 2048, 0, 0, NULL, 0);
 
     return self;
 }
