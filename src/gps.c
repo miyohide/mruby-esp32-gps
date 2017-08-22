@@ -3,12 +3,12 @@
 #include "driver/uart.h"
 // #include "minmea.h"
 
-//static QueueHandle_t uart0_queue;
+static QueueHandle_t uart0_queue;
 
 char* read_line(uart_port_t uart) {
     uint8_t* data = (uint8_t*)malloc(1024);
     do {
-        int len = uart_read_bytes(UART_NUM_0, data, 1024, 100 / portTICK_RATE_MS);
+        int len = uart_read_bytes(UART_NUM_2, data, 1024, 100 / portTICK_RATE_MS);
         if (len > 0) {
             return (const char *) data;
         }
@@ -24,20 +24,20 @@ static mrb_value mrb_esp32_gps_init(mrb_state *mrb, mrb_value self) {
     uart_conf.flow_ctrl  = UART_HW_FLOWCTRL_DISABLE;
     uart_conf.rx_flow_ctrl_thresh = 120;
 
-    uart_param_config(UART_NUM_0, &uart_conf);
-    uart_set_pin(UART_NUM_0,
+    uart_param_config(UART_NUM_2, &uart_conf);
+    uart_set_pin(UART_NUM_2,
          17,  // TX
          16,  // RX
          UART_PIN_NO_CHANGE,  // RTS
          UART_PIN_NO_CHANGE); // CTS
 
-    uart_driver_install(UART_NUM_0, 2048, 0, 0, NULL, 0);
+    uart_driver_install(UART_NUM_2, 2048, 2048, 10, &uart0_queue, 0);
 
     return self;
 }
 
 static mrb_value mrb_esp32_gps_dogps(mrb_state *mrb, mrb_value self) {
-    return mrb_str_new_cstr(mrb, read_line(UART_NUM_0));
+    return mrb_str_new_cstr(mrb, read_line(UART_NUM_2));
 }
 
 void mrb_mruby_esp32_gps_gem_init(mrb_state* mrb) {
