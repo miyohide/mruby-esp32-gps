@@ -3,12 +3,14 @@
 #include "driver/uart.h"
 // #include "minmea.h"
 
+#define BUF_SIZE (512)
+
 static QueueHandle_t uart0_queue;
 
 char* read_line(uart_port_t uart) {
-    uint8_t* data = (uint8_t*)malloc(1024);
+    uint8_t* data = (uint8_t*)malloc(BUF_SIZE);
     do {
-        int len = uart_read_bytes(UART_NUM_2, data, 1024, 100 / portTICK_RATE_MS);
+        int len = uart_read_bytes(UART_NUM_2, data, BUF_SIZE, 100 / portTICK_RATE_MS);
         if (len > 0) {
             data[len] = NULL;
             return (const char *) data;
@@ -32,7 +34,7 @@ static mrb_value mrb_esp32_gps_init(mrb_state *mrb, mrb_value self) {
          UART_PIN_NO_CHANGE,  // RTS
          UART_PIN_NO_CHANGE); // CTS
 
-    uart_driver_install(UART_NUM_2, 2048, 2048, 10, &uart0_queue, 0);
+    uart_driver_install(UART_NUM_2, BUF_SIZE * 2, BUF_SIZE * 2, 10, &uart0_queue, 0);
     uart_enable_pattern_det_intr(UART_NUM_2, '\n', 3, 10000, 10, 10);
     return self;
 }
