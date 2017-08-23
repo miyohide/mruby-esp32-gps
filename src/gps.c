@@ -13,7 +13,7 @@ static void uart_event_task(void *pvParameters) {
     size_t buffered_size;
     uint8_t* dtmp = (uint8_t*) malloc(BUF_SIZE);
     for(;;) {
-        if (xQueuReceive(uart0_queue, (void *)&event, (portTickType)portMAX_DELAY)) {
+        if (xQueueReceive(uart0_queue, (void *)&event, (portTickType)portMAX_DELAY)) {
             switch(event.type) {
             case UART_DATA:
                 uart_get_buffered_data_len(UART_NUM_2, &buffered_size);
