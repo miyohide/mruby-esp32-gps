@@ -1,6 +1,7 @@
 #include <mruby.h>
 #include <mruby/value.h>
 #include "driver/uart.h"
+#include "freertos/queue.h"
 // #include "minmea.h"
 
 #define BUF_SIZE (512)
