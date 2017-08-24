@@ -60,8 +60,7 @@ static mrb_value mrb_esp32_gps_init(mrb_state *mrb, mrb_value self) {
          UART_PIN_NO_CHANGE); // CTS
 
     uart_driver_install(UART_NUM_2, BUF_SIZE * 2, BUF_SIZE * 2, 10, &uart0_queue, 0);
-    uint8_t newline = '\n';
-    uart_enable_pattern_det_intr(UART_NUM_2, &newline, 3, 10000, 10, 10);
+    uart_enable_pattern_det_intr(UART_NUM_2, 10, 1, 10000, 10, 10);
     xTaskCreate(uart_event_task, "uart_event_task", 2048, NULL, 12, NULL);
     return self;
 }
