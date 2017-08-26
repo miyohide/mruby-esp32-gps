@@ -43,7 +43,7 @@ char* read_line(uart_port_t uart) {
                 *ptr = 0;
                 return (const char *) data;
             }
-            ptr++:
+            ptr++;
         }
     } while(1);
 }
