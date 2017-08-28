@@ -83,7 +83,7 @@ static mrb_value mrb_esp32_gps_dogps(mrb_state *mrb, mrb_value self) {
                 *ptr = 0;
                 data_size--;
                 ret = mrb_str_new(mrb, data, data_size);
-                mrb_free(mrb, buf);
+                mrb_free(mrb, data);
                 return ret;
             }
             ptr++;
