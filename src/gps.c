@@ -71,7 +71,26 @@ static mrb_value mrb_esp32_gps_init(mrb_state *mrb, mrb_value self) {
 }
 
 static mrb_value mrb_esp32_gps_dogps(mrb_state *mrb, mrb_value self) {
-    return mrb_str_new_cstr(mrb, read_line(UART_NUM_2));
+    uint8_t* data = (uint8_t*)mrb_malloc(mrb, BUF_SIZE);
+    uint8_t* ptr = data;
+    int data_size = 0;
+    mrb_value ret;
+    do {
+        int len = uart_read_bytes(UART_NUM_2, ptr, 1, 100 / portTICK_RATE_MS);
+        if (len == 1) {
+            if (*ptr == '\n') {
+                ptr--;
+                *ptr = 0;
+                data_size--;
+                ret = mrb_str_new(mrb, data, data_size);
+                mrb_free(mrb, buf);
+                return ret;
+            }
+            ptr++;
+            data_size++;
+        }
+    } while(1);
+    // return mrb_str_new_cstr(mrb, read_line(UART_NUM_2));
 }
 
 void mrb_mruby_esp32_gps_gem_init(mrb_state* mrb) {
